@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atividade — Simulador Venturi · Prof. Cobianchi</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#1a3a6b;
+  --azul2:#2563a8;
+  --azul3:#e8f0fb;
+  --verm:#c0392b;
+  --verm2:#e74c3c;
+  --verde:#1a6b3a;
+  --verde2:#27ae60;
+  --laranja:#d35400;
+  --amarelo:#f39c12;
+  --cinza:#f4f6f9;
+  --cinza2:#dde3ed;
+  --cinza3:#8a9ab5;
+  --txt:#1a2340;
+  --txt2:#3a4a6b;
+  --brd:#c5cfe8;
+  --white:#fff;
+  --shadow:0 2px 12px rgba(26,58,107,.10);
+  --shadow2:0 4px 24px rgba(26,58,107,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:#e8ecf3;
+  color:var(--txt);
+  min-height:100vh;
+}
+
+/* ═══ HEADER INSTITUCIONAL ═══ */
+.inst-header{
+  background:linear-gradient(135deg, var(--azul) 0%, var(--azul2) 100%);
+  color:#fff;
+  padding:0;
+  box-shadow:var(--shadow2);
+  position:relative;
+  overflow:hidden;
+}
+.inst-header::before{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,transparent,transparent 18px,
+    rgba(255,255,255,.025) 18px,rgba(255,255,255,.025) 36px
+  );
+}
+.inst-header::after{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--verm),var(--amarelo),var(--verde2),var(--azul2));
+}
+.inst-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px 16px;
+  position:relative;z-index:1;
+}
+.inst-logo{
+  display:flex;align-items:center;gap:16px;
+}
+.logo-box{
+  background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.25);
+  border-radius:6px;
+  padding:6px 12px;
+  font-family:'Merriweather',serif;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:-1px;
+  line-height:1;
+  color:#fff;
+}
+.logo-box span{color:var(--amarelo)}
+.inst-names{display:flex;flex-direction:column;gap:1px}
+.inst-univ{font-family:'Merriweather',serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:#fff;line-height:1.3}
+.inst-prog{font-size:10px;font-weight:300;letter-spacing:.5px;color:rgba(255,255,255,.75);line-height:1.4;max-width:320px}
+.inst-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;
+  padding:4px 12px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:rgba(255,255,255,.9);
+  letter-spacing:1px;
+}
+.dot-live{width:7px;height:7px;border-radius:50%;background:#4cff8a;box-shadow:0 0 8px #4cff8a;animation:bk 2s infinite}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.inst-badge{
+  display:flex;gap:6px;
+}
+.badge{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:3px;
+  padding:2px 8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  color:rgba(255,255,255,.65);
+  letter-spacing:1px;
+}
+.inst-title{
+  background:rgba(0,0,0,.2);
+  padding:8px 24px;
+  border-top:1px solid rgba(255,255,255,.1);
+  position:relative;z-index:1;
+}
+.inst-title h2{
+  font-family:'Merriweather',serif;
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:.5px;
+  text-align:center;
+}
+.inst-title p{
+  font-size:10px;
+  color:rgba(255,255,255,.6);
+  text-align:center;
+  margin-top:2px;
+  font-weight:300;
+}
+
+/* ═══ MAIN LAYOUT ═══ */
+.poster-body{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+  max-width:1400px;
+  margin:0 auto;
+  padding:16px 16px 20px;
+}
+
+/* ═══ SECTION LABEL ═══ */
+.sec-label{
+  font-family:'Merriweather',serif;
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--azul2);
+  border-bottom:2px solid var(--azul2);
+  padding-bottom:4px;
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.sec-label::before{
+  content:'';
+  display:inline-block;
+  width:12px;height:3px;
+  background:var(--verm);
+  border-radius:2px;
+}
+
+/* ═══ CONTROLS SECTION ═══ */
+.controls-card{
+  background:var(--white);
+  border:1px solid var(--brd);
+  border-top:3px solid var(--azul);
+  border-radius:6px;
+  padding:14px 16px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+.ctrl-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.ctrl-item{
+  background:var(--cinza);
+  border:1px solid var(--cinza2);
+  border-radius:5px;
+  padding:10px 12px;
+}
+.ctrl-item label{
+  display:block;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--azul);
+  margin-bottom:2px;
+}
+.ctrl-item .ctrl-val{
+  font-family:'Share Tech Mono',monospace;
+  font-size:16px;
+  color:var(--azul2);
+  font-weight:700;
+}
+.ctrl-item .ctrl-unit{
+  font-size:10px;
+  color:var(--cinza3);
+  margin-left:3px;
+}
+input[type=range]{
+  width:100%;height:4px;margin-top:6px;
+  -webkit-appearance:none;
+  background:linear-gradient(90deg,var(--azul2),var(--brd));
+  border-radius:2px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--white);border:2.5px solid var(--azul2);
+  cursor:pointer;box-shadow:0 1px 6px rgba(37,99,168,.3);
+}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;
+  background:var(--white);border:2.5px solid var(--azul2);
+  cursor:pointer;box-shadow:0 1px 6px rgba(37,99,168,.3);
+}
+
+/* ═══ READINGS ROW ═══ */
+.readings-card{
+  background:var(--white);
+  border:1px solid var(--brd);
+  border-radius:6px;
+  padding:14px 16px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+.rd-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.rd{
+  background:var(--cinza);
+  border:1px solid var(--cinza2);
+  border-radius:5px;
+  padding:10px 12px;
+  position:relative;
+  overflow:hidden;
+}
+.rd::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:5px 5px 0 0;
+}
+.rd.c-azul::after{background:var(--azul2)}
+.rd.c-verde::after{background:var(--verde2)}
+.rd.c-laranja::after{background:var(--laranja)}
+.rd.c-amarelo::after{background:var(--amarelo)}
+.rd.c-verm::after{background:var(--verm)}
+.rd-lbl{
+  font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--cinza3);margin-bottom:3px;
+}
+.rd-val{
+  font-family:'Share Tech Mono',monospace;
+  font-size:22px;line-height:1.15;
+}
+.rd-val.azul{color:var(--azul2)}
+.rd-val.verde{color:var(--verde)}
+.rd-val.laranja{color:var(--laranja)}
+.rd-val.amarelo{color:var(--amarelo)}
+.rd-val.verm{color:var(--verm)}
+.rd-unit{font-size:10px;color:var(--cinza3);font-family:'Source Sans 3',sans-serif}
+.rd-sub{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--cinza3);margin-top:2px}
+.prog-bar{height:4px;background:var(--cinza2);border-radius:2px;margin-top:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;transition:width .3s}
+
+/* ═══ VENTURI DIAGRAM ═══ */
+.venturi-card{
+  background:var(--white);
+  border:1px solid var(--brd);
+  border-radius:6px;
+  padding:14px 16px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.venturi-wrap{
+  position:relative;
+  background:linear-gradient(180deg,#f0f4fa 0%,var(--white) 100%);
+  border:1px solid var(--cinza2);
+  border-radius:4px;
+  overflow:hidden;
+}
+.venturi-svg{width:100%;height:auto;display:block}
+
+/* ═══ BOTTOM READINGS ═══ */
+.bot-card{
+  background:var(--white);
+  border:1px solid var(--brd);
+  border-radius:6px;
+  padding:14px 16px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+.bot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+
+/* ═══ FOOTER ═══ */
+.inst-footer{
+  background:var(--azul);
+  padding:10px 24px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:8px;
+}
+.ftr-txt{
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  color:rgba(255,255,255,.5);letter-spacing:.5px;
+}
+.ftr-logos{display:flex;align-items:center;gap:16px}
+.ftr-logo{
+  font-family:'Merriweather',serif;font-size:10px;font-weight:700;
+  color:rgba(255,255,255,.4);letter-spacing:1px;
+  border:1px solid rgba(255,255,255,.15);
+  padding:2px 8px;border-radius:3px;
+}
+
+/* ═══ EQUAÇÃO DESTAQUE ═══ */
+.eq-banner{
+  background:linear-gradient(135deg,var(--azul3) 0%,#fff 100%);
+  border:1px solid var(--brd);
+  border-left:4px solid var(--azul2);
+  border-radius:6px;
+  padding:10px 16px;
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:16px;
+  flex-wrap:wrap;
+}
+.eq-banner .eq-title{
+  font-family:'Merriweather',serif;font-size:10px;font-weight:700;
+  color:var(--azul);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;
+}
+.eq-formula{
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px;color:var(--azul2);
+  background:rgba(37,99,168,.07);
+  border:1px solid rgba(37,99,168,.15);
+  border-radius:4px;padding:4px 12px;
+  letter-spacing:.5px;
+}
+.eq-desc{font-size:10px;color:var(--txt2);line-height:1.5;flex:1}
+.model-note{font-size:10px;color:var(--txt2);line-height:1.5;margin-top:10px;padding-top:8px;border-top:1px dashed var(--cinza2)}
+.model-note b{color:var(--azul)}
+.warn{color:var(--verm)!important;font-weight:700}
+
+/* ═══ RESPONSIVO ═══ */
+@media (max-width:1100px){
+  .ctrl-grid{grid-template-columns:repeat(3,1fr)}
+  .rd-grid{grid-template-columns:repeat(3,1fr)}
+  .bot-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:640px){
+  .inst-top{flex-wrap:wrap;gap:10px}
+  .inst-right{align-items:flex-start}
+  .ctrl-grid,.rd-grid,.bot-grid{grid-template-columns:repeat(2,1fr)}
+  .eq-formula{font-size:12px}
+}
+
+/* ═══ LAYOUT ATIVIDADE ═══ */
+.app{display:grid;grid-template-columns:1fr;gap:14px;max-width:1700px;margin:0 auto;padding:14px}
+.sim-col .ctrl-grid,.sim-col .rd-grid,.sim-col .bot-grid{grid-template-columns:repeat(3,1fr)}
+@media (min-width:1200px){
+  .app{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+  .sim-col{position:sticky;top:0;max-height:100vh;overflow:auto;padding-bottom:10px}
+}
+@media (max-width:640px){.sim-col .ctrl-grid,.sim-col .rd-grid,.sim-col .bot-grid{grid-template-columns:repeat(2,1fr)}}
+.sim-reset{display:flex;justify-content:flex-end;margin-top:8px}
+
+.ws-card{background:#fff;border:1px solid var(--brd);border-radius:6px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:12px}
+.ws-card h3{font-family:'Merriweather',serif;font-size:15px;color:var(--azul);margin-bottom:8px}
+.ws-card h4{font-family:'Merriweather',serif;font-size:12px;color:var(--azul2);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px}
+.ws-card p{font-size:14px;line-height:1.5;color:var(--txt2);margin-bottom:8px}
+.ws-card .meta{font-size:12px;color:var(--cinza3)}
+.poe{font-size:14px;line-height:1.5;color:var(--txt2);padding-left:20px;margin-bottom:8px}
+.poe li{margin-bottom:4px}
+.tip{background:var(--azul3);border-left:3px solid var(--azul2);padding:8px 10px;border-radius:4px;font-size:13px!important}
+.id-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.id-grid label,.q{display:block;font-size:13px;font-weight:600;color:var(--azul);margin-bottom:10px}
+input.fld,textarea.fld,.num{width:100%;margin-top:4px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--txt);
+  border:1px solid var(--brd);border-radius:4px;padding:7px 9px;background:var(--cinza);font-weight:400}
+textarea.fld{resize:vertical;line-height:1.45}
+input.fld:focus,textarea.fld:focus{outline:2px solid rgba(37,99,168,.25);background:#fff}
+.fld:disabled,.fld[readonly]{background:#eef1f6;color:var(--txt2)}
+.prog-wrap{margin-top:4px}
+.prog-txt{font-size:12px;font-weight:700;color:var(--verde);margin-bottom:3px}
+.prog-bar.big{height:7px}
+
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{flex:1;min-width:90px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;color:var(--azul);
+  background:#fff;border:1px solid var(--brd);border-radius:5px;padding:8px 6px;cursor:pointer}
+.tabs button.on{background:var(--azul);color:#fff;border-color:var(--azul)}
+.tabs button.done::after{content:' ✓';color:var(--verde2)}
+.tabs button.on.done::after{color:#7dffb0}
+.tab-sec{display:none}
+.tab-sec.on{display:block}
+
+.step{display:flex;align-items:center;gap:8px;margin:14px 0 8px}
+.step span{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
+  background:var(--azul2);color:#fff;font-weight:700;font-size:12px}
+.step b{font-family:'Merriweather',serif;font-size:13px;color:var(--azul)}
+.step.lock span{background:var(--cinza3)}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+.opts label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);background:var(--cinza);
+  border:1px solid var(--cinza2);border-radius:20px;padding:5px 12px;cursor:pointer;font-weight:400}
+.opts input{accent-color:var(--azul2)}
+.opts label:has(input:checked){border-color:var(--azul2);background:var(--azul3);font-weight:700}
+.btn{font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;border-radius:5px;padding:7px 14px;cursor:pointer;
+  border:1px solid var(--azul2);background:#fff;color:var(--azul2)}
+.btn.pri{background:var(--azul2);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.badge-ok{display:inline-block;font-size:12px;font-weight:700;color:var(--verde);background:#e5f4e4;border-radius:4px;padding:3px 8px}
+.msg{font-size:13px;margin-top:6px;min-height:18px}
+.msg.err{color:var(--verm);font-weight:600}
+.msg.ok{color:var(--verde);font-weight:600}
+.need{font-size:13px;color:var(--txt2);background:#f9eeda;border-left:3px solid var(--amarelo);padding:7px 10px;border-radius:4px;margin-bottom:8px}
+.locked-note{font-size:13px;color:var(--cinza3);font-style:italic;margin:4px 0}
+table.dt{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:6px}
+table.dt th{background:var(--azul);color:#fff;font-weight:600;padding:6px 5px;text-align:center;font-size:12px}
+table.dt td{border:1px solid var(--cinza2);padding:5px;text-align:center;font-family:'Share Tech Mono',monospace}
+table.dt tr:nth-child(even) td{background:var(--cinza)}
+table.dt td.cur{outline:2px solid var(--amarelo);outline-offset:-2px}
+.tbl-wrap{overflow-x:auto}
+canvas.chart{width:100%;height:auto;border:1px solid var(--cinza2);border-radius:4px;background:#fff;display:block;margin-top:6px}
+.fit{font-size:12px;color:var(--txt2);margin-top:4px;font-family:'Share Tech Mono',monospace}
+.antes{font-size:13px;font-weight:400;color:var(--txt2);background:#f9ece7;border-left:3px solid var(--laranja);padding:6px 10px;border-radius:4px;margin:4px 0;white-space:pre-wrap}
+.antes::before{content:'Resposta do início: ';font-weight:700;color:var(--laranja)}
+.ratio-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ratio-row .num{width:110px;margin-top:0}
+
+@media (max-width:640px){.id-grid{grid-template-columns:1fr}}
+
+/* ═══ IMPRESSÃO ═══ */
+@media print{
+  body{background:#fff}
+  .sim-col,.no-print,.inst-footer,.btn,.sim-reset{display:none!important}
+  .app{display:block;padding:0}
+  .tab-sec{display:block!important;break-inside:auto}
+  .ws-card{box-shadow:none;break-inside:avoid-page}
+  textarea.fld{overflow:hidden;resize:none}
+  canvas.chart{max-width:460px;margin:6px auto}
+  .resume,.mirror{display:none!important}
+  .inst-header{box-shadow:none}
+}
+
+.resume{background:#f9eeda;border:1px solid var(--amarelo);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--txt)}
+.resume .btn-row{margin-top:8px}
+.mirror{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;background:var(--cinza);border:1px solid var(--cinza2);border-radius:5px;padding:8px 10px;margin-bottom:8px}
+.mirror b{font-size:13px;color:var(--azul)}
+.mirror .mv{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--azul2);min-width:70px;text-align:right}
+.mirror input[type=range]{margin-top:0}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER INSTITUCIONAL ══ -->
+<div class="inst-header">
+  <div class="inst-top">
+    <div class="inst-logo">
+      <div class="logo-box">U<br><span>E</span><br>M</div>
+      <div style="width:1px;height:48px;background:rgba(255,255,255,.2)"></div>
+      <div class="logo-box" style="font-size:18px;letter-spacing:0">MN<br><span>PE</span><br>F</div>
+      <div class="inst-names">
+        <div class="inst-univ">Universidade Estadual de Maringá</div>
+        <div class="inst-univ" style="font-size:11px;font-weight:400">Centro de Ciências Exatas</div>
+        <div class="inst-prog">Programa de Pós-Graduação em Mestrado Nacional<br>Profissional em Ensino de Física</div>
+      </div>
+    </div>
+    <div class="inst-right">
+      <div class="status-pill">
+        <span class="dot-live" id="dot"></span>
+        <span id="sB">SISTEMA ATIVO</span>
+      </div>
+      <div class="inst-badge">
+        <span class="badge">REF. ISO 5167-4</span>
+        <span class="badge">AD20P-1230C</span>
+        <span class="badge">ABNT NBR</span>
+      </div>
+    </div>
+  </div>
+  <div class="inst-title">
+    <h2>ATIVIDADE INVESTIGATIVA — EQUAÇÃO DE BERNOULLI NO TUBO VENTURI</h2>
+    <p>Cobianchi, M. &nbsp;|&nbsp; Pereira, J.R.D.</p>
+  </div>
+</div>
+
+<!-- ══ BODY ══ -->
+<div class="app">
+<div class="sim-col">
+
+  <!-- Equação destaque -->
+  <div class="eq-banner">
+    <div class="eq-title">Equação de<br>Bernoulli</div>
+    <div class="eq-formula">P₁ + ½ρV₁² = P₂ + ½ρV₂²</div>
+    <div class="eq-formula">Q = C<sub>d</sub>·A₂·√[2ΔP / (ρ(1−β⁴))]</div>
+    <div class="eq-desc">
+      A conservação de energia em escoamento incompressível: a redução na seção transversal do tubo Venturi
+      acelera o fluido (↑ V₂) e reduz a pressão estática (↓ P₂), permitindo medir a vazão a partir de ΔP.
+    </div>
+  </div>
+
+  <!-- CONTROLES -->
+  <div class="controls-card">
+    <div class="sec-label">Parâmetros de Simulação</div>
+    <div class="ctrl-grid">
+      <div class="ctrl-item">
+        <label for="qS">Vazão Q</label>
+        <div><span class="ctrl-val" id="qV">240</span><span class="ctrl-unit">L/h</span></div>
+        <input type=range min=0 max=240 value=240 step=1 id=qS oninput="upd()">
+      </div>
+      <div class="ctrl-item">
+        <label for="tS">Temperatura</label>
+        <div><span class="ctrl-val" id="tV">25</span><span class="ctrl-unit">°C</span></div>
+        <input type=range min=5 max=80 value=25 step=1 id=tS oninput="upd()">
+      </div>
+      <div class="ctrl-item">
+        <label for="dS">Diâmetro D</label>
+        <div><span class="ctrl-val" id="dV">20</span><span class="ctrl-unit">mm</span></div>
+        <input type=range min=12 max=30 value=20 step=1 id=dS oninput="upd()">
+      </div>
+      <div class="ctrl-item">
+        <label for="gS">Garganta d</label>
+        <div><span class="ctrl-val" id="gV">7</span><span class="ctrl-unit">mm</span></div>
+        <input type=range min=4 max=15 value=7 step=1 id=gS oninput="upd()">
+      </div>
+      <div class="ctrl-item">
+        <label for="cdS">Coef. Descarga Cd</label>
+        <div><span class="ctrl-val" id="cdV">0,980</span></div>
+        <input type=range min=0.90 max=1.00 value=0.98 step=0.005 id=cdS oninput="upd()">
+      </div>
+      <div class="ctrl-item">
+        <label for="p1S">Pressão P₁ (absoluta)</label>
+        <div><span class="ctrl-val" id="p1V">105,0</span><span class="ctrl-unit">kPa</span></div>
+        <input type=range min=100 max=150 value=105 step=0.5 id=p1S oninput="upd()">
+      </div>
+    </div>
+  </div>
+
+  <!-- LEITURAS PRINCIPAIS -->
+  <div class="readings-card">
+    <div class="sec-label">Leituras dos Sensores — MPX4250AP</div>
+    <div class="rd-grid">
+      <div class="rd c-verde">
+        <div class="rd-lbl">P1 — Montante</div>
+        <div class="rd-val verde" id="p1">—</div>
+        <div class="rd-unit">kPa (lido)</div>
+        <div class="rd-sub" id="p1s">MPX4250AP · S1</div>
+      </div>
+      <div class="rd c-laranja">
+        <div class="rd-lbl">P2 — Garganta</div>
+        <div class="rd-val laranja" id="p2">—</div>
+        <div class="rd-unit">kPa (lido)</div>
+        <div class="rd-sub" id="p2s">MPX4250AP · S2</div>
+      </div>
+      <div class="rd c-azul">
+        <div class="rd-lbl">ΔP — Diferencial</div>
+        <div class="rd-val azul" id="dp">—</div>
+        <div class="rd-unit">kPa (lido)</div>
+        <div class="rd-sub" id="dps">—</div>
+        <div class="prog-bar"><div class="prog-fill" id="dpB" style="width:50%;background:var(--azul2)"></div></div>
+      </div>
+      <div class="rd c-azul">
+        <div class="rd-lbl">V₁ — Entrada</div>
+        <div class="rd-val azul" style="font-size:18px" id="v1">—</div>
+        <div class="rd-unit">m/s (continuidade)</div>
+      </div>
+      <div class="rd c-amarelo">
+        <div class="rd-lbl">V₂ — Garganta</div>
+        <div class="rd-val amarelo" style="font-size:18px" id="v2">—</div>
+        <div class="rd-unit">m/s (continuidade)</div>
+      </div>
+      <div class="rd c-azul">
+        <div class="rd-lbl">Vazão medida (via ΔP)</div>
+        <div class="rd-val azul" style="font-size:24px" id="qC">—</div>
+        <div class="rd-unit">L/h</div>
+        <div class="rd-sub" id="qErr">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUBO VENTURI -->
+  <div class="venturi-card">
+    <div class="sec-label">Diagrama do Tubo Venturi — Perfil baseado na ISO 5167-4 · escoamento em câmera lenta</div>
+    <div class="venturi-wrap" id="vWrap">
+      <svg class="venturi-svg" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" id="vSvg">
+        <defs>
+          <linearGradient id="waterG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#2563a8" stop-opacity=".04"/>
+            <stop offset="22%" stop-color="#2563a8" stop-opacity=".09"/>
+            <stop offset="36%" stop-color="#2563a8" stop-opacity=".22"/>
+            <stop offset="40%" stop-color="#2563a8" stop-opacity=".22"/>
+            <stop offset="55%" stop-color="#2563a8" stop-opacity=".08"/>
+            <stop offset="100%" stop-color="#2563a8" stop-opacity=".03"/>
+          </linearGradient>
+          <linearGradient id="pressG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#27ae60" stop-opacity=".06"/>
+            <stop offset="25%" stop-color="#27ae60" stop-opacity=".12"/>
+            <stop offset="36%" stop-color="#c0392b" stop-opacity=".08"/>
+            <stop offset="50%" stop-color="#d35400" stop-opacity=".05"/>
+            <stop offset="100%" stop-color="#27ae60" stop-opacity=".03"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="2" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glowS"><feGaussianBlur stdDeviation="1.5" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <pattern id="hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="5" stroke="rgba(26,58,107,.12)" stroke-width=".8"/>
+          </pattern>
+        </defs>
+
+        <path id="wallTop" fill="url(#hatch)" stroke="none"/>
+        <path id="wallBot" fill="url(#hatch)" stroke="none"/>
+        <path id="waterFill" fill="url(#waterG)" stroke="none"/>
+        <path id="pressFill" fill="url(#pressG)" stroke="none" opacity=".6"/>
+        <g id="pGroup" fill="#2563a8"></g>
+
+        <path id="outerTop" fill="none" stroke="#1a3a6b" stroke-width="2" filter="url(#glow)"/>
+        <path id="outerBot" fill="none" stroke="#1a3a6b" stroke-width="2" filter="url(#glow)"/>
+        <path id="innerTop" fill="none" stroke="#2563a8" stroke-width=".8" stroke-dasharray="6 5" opacity=".3"/>
+        <path id="innerBot" fill="none" stroke="#2563a8" stroke-width=".8" stroke-dasharray="6 5" opacity=".3"/>
+
+        <line id="capTL" stroke="#1a3a6b" stroke-width="2" filter="url(#glowS)"/>
+        <line id="capBL" stroke="#1a3a6b" stroke-width="2" filter="url(#glowS)"/>
+        <line id="capTR" stroke="#1a3a6b" stroke-width="2" filter="url(#glowS)"/>
+        <line id="capBR" stroke="#1a3a6b" stroke-width="2" filter="url(#glowS)"/>
+
+        <!-- Sensor P1 -->
+        <g id="sensorP1">
+          <rect id="s1outer" fill="none" stroke="#27ae60" stroke-width="1.5" rx="2" filter="url(#glowS)"/>
+          <rect id="s1bore" fill="none" stroke="#27ae60" stroke-width=".7" stroke-dasharray="3 3" opacity=".4" rx="1"/>
+          <ellipse id="s1gusset" fill="none" stroke="#27ae60" stroke-width="1" opacity=".4"/>
+        </g>
+        <!-- Sensor P2 -->
+        <g id="sensorP2">
+          <rect id="s2outer" fill="none" stroke="#d35400" stroke-width="1.5" rx="2" filter="url(#glowS)"/>
+          <rect id="s2bore" fill="none" stroke="#d35400" stroke-width=".7" stroke-dasharray="3 3" opacity=".4" rx="1"/>
+          <ellipse id="s2gusset" fill="none" stroke="#d35400" stroke-width="1" opacity=".4"/>
+        </g>
+
+        <g id="lP1" filter="url(#glowS)">
+          <text text-anchor="middle" fill="#27ae60" font-family="Share Tech Mono" font-size="12" id="lP1v"></text>
+          <text text-anchor="middle" fill="#1a6b3a" font-family="Source Sans 3" font-weight="700" font-size="14" id="lP1n">P1</text>
+        </g>
+        <g id="lP2" filter="url(#glowS)">
+          <text text-anchor="middle" fill="#d35400" font-family="Share Tech Mono" font-size="12" id="lP2v"></text>
+          <text text-anchor="middle" fill="#c0392b" font-family="Source Sans 3" font-weight="700" font-size="14" id="lP2n">P2</text>
+        </g>
+
+        <g id="dims" fill="rgba(26,58,107,.35)" stroke="rgba(26,58,107,.2)" stroke-width=".5" font-family="Share Tech Mono" font-size="9"/>
+        <g id="sLabels" fill="rgba(58,74,107,.4)" font-family="Source Sans 3" font-weight="600" font-size="9" text-anchor="middle"/>
+        <g id="cutA" fill="rgba(192,57,43,.4)" stroke="rgba(192,57,43,.2)" stroke-width="1" font-family="Source Sans 3" font-weight="700" font-size="12"/>
+        <g id="flowArrow" opacity=".15" stroke="#2563a8" stroke-width="1" stroke-dasharray="8 6"/>
+
+        <rect id="hudBg" fill="rgba(240,244,250,.9)" stroke="rgba(26,58,107,.2)" stroke-width="1" rx="4"/>
+        <text id="hudTxt" text-anchor="middle" fill="rgba(26,58,107,.85)" font-family="Share Tech Mono" font-size="12" filter="url(#glowS)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- PARÂMETROS ADICIONAIS -->
+  <div class="bot-card">
+    <div class="sec-label">Parâmetros Hidráulicos Avançados</div>
+    <div class="bot-grid">
+      <div class="rd c-azul">
+        <div class="rd-lbl">Beta β = d/D</div>
+        <div class="rd-val azul" style="font-size:18px" id="bV">—</div>
+        <div class="prog-bar"><div class="prog-fill" id="bB" style="width:46%;background:var(--azul2)"></div></div>
+        <div class="rd-sub" id="bS">ISO: 0,40–0,75</div>
+      </div>
+      <div class="rd c-amarelo">
+        <div class="rd-lbl">Reynolds Re</div>
+        <div class="rd-val amarelo" style="font-size:18px" id="rV">—</div>
+        <div class="rd-sub" id="rS">—</div>
+      </div>
+      <div class="rd c-verde">
+        <div class="rd-lbl">Coef. Descarga Cd</div>
+        <div class="rd-val verde" style="font-size:18px" id="cV">—</div>
+        <div class="rd-sub" id="cS">—</div>
+      </div>
+      <div class="rd c-azul">
+        <div class="rd-lbl">Vout lido P1 / P2</div>
+        <div style="display:flex;gap:6px;align-items:baseline">
+          <span class="rd-val verde" style="font-size:14px" id="vo1">—</span>
+          <span style="color:var(--cinza3)">/</span>
+          <span class="rd-val laranja" style="font-size:14px" id="vo2">—</span>
+        </div>
+      </div>
+      <div class="rd c-amarelo">
+        <div class="rd-lbl">ΔV Sinal</div>
+        <div class="rd-val amarelo" style="font-size:18px" id="dv">—</div>
+        <div class="rd-unit">mV</div>
+        <div class="rd-sub" id="adc">—</div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sim-reset no-print"><button class="btn" id="bSimReset">Restaurar valores padrão do simulador</button></div>
+</div>
+<div class="ws-col" id="ws">
+  <div class="resume" id="resume" style="display:none"></div>
+  <div class="ws-card">
+    <div class="sec-label">Roteiro do aluno · Prof. Cobianchi</div>
+    <div class="id-grid">
+      <label>Nome(s) do grupo<input class="fld" id="nomes" type="text" placeholder="Nomes dos integrantes"></label>
+      <label>Turma<input class="fld" id="turma" type="text" placeholder="Ex.: 2º A"></label>
+      <label>Data<input class="fld" id="data" type="date"></label>
+    </div>
+    <div class="prog-wrap"><div class="prog-txt" id="progTxt">Progresso: 0%</div><div class="prog-bar big"><div class="prog-fill" id="progFill" style="width:0%;background:var(--verde2)"></div></div></div>
+  </div>
+
+  <nav class="tabs no-print" id="tabs">
+    <button data-t="t0" class="on">Início</button>
+    <button data-t="m1">Missão 1</button>
+    <button data-t="m2">Missão 2</button>
+    <button data-t="m3">Missão 3</button>
+    <button data-t="m4">Missão 4</button>
+    <button data-t="t5">Fechamento</button>
+  </nav>
+
+  <!-- INÍCIO -->
+  <section class="tab-sec on" id="sec-t0">
+    <div class="ws-card">
+      <h3>Como funciona esta atividade</h3>
+      <p>Em cada missão vocês vão seguir três passos:</p>
+      <ol class="poe">
+        <li><b>Prever:</b> antes de mexer no simulador, escrevam o que acham que vai acontecer e por quê. Depois de registrada, a previsão não pode ser alterada — errar a previsão faz parte do aprendizado!</li>
+        <li><b>Observar:</b> ajustem o simulador como a tabela pede e cliquem em <i>Capturar</i> para registrar as leituras.</li>
+        <li><b>Explicar:</b> comparem o que observaram com o que previram e expliquem a diferença.</li>
+      </ol>
+      <p class="tip">💡 As respostas ficam salvas neste navegador. No final, use <b>Imprimir / Salvar PDF</b> para entregar.</p>
+    </div>
+    <div class="ws-card">
+      <h3>Para começar: o que vocês já sabem?</h3>
+      <p>Respondam com as palavras de vocês. Não existe resposta errada aqui.</p>
+      <label class="q">1. Por que, quando tapamos parte da saída da mangueira com o dedo, a água vai mais longe?<textarea class="fld" id="a1" rows="3"></textarea></label>
+      <label class="q">2. Como funciona um borrifador de perfume ou de veneno de horta?<textarea class="fld" id="a2" rows="3"></textarea></label>
+      <label class="q">3. Por que a cortina do chuveiro é "puxada" para dentro quando o chuveiro está ligado?<textarea class="fld" id="a3" rows="3"></textarea></label>
+    </div>
+  </section>
+
+  <!-- MISSÕES (geradas) -->
+  <section class="tab-sec" id="sec-m1"></section>
+  <section class="tab-sec" id="sec-m2"></section>
+  <section class="tab-sec" id="sec-m3"></section>
+  <section class="tab-sec" id="sec-m4"></section>
+
+  <!-- FECHAMENTO -->
+  <section class="tab-sec" id="sec-t5">
+    <div class="ws-card">
+      <h3>Fechamento: e agora, o que vocês respondem?</h3>
+      <p>Releiam a resposta que deram no início e reescrevam usando o que aprenderam (continuidade, Bernoulli, pressão, velocidade).</p>
+      <div class="q">1. Mangueira com o dedo na saída.<div class="antes" id="ant1"></div><textarea class="fld" id="d1" rows="3" placeholder="Nova resposta"></textarea></div>
+      <div class="q">2. Borrifador de perfume.<div class="antes" id="ant2"></div><textarea class="fld" id="d2" rows="3" placeholder="Nova resposta"></textarea></div>
+      <div class="q">3. Cortina do chuveiro.<div class="antes" id="ant3"></div><textarea class="fld" id="d3" rows="3" placeholder="Nova resposta"></textarea></div>
+      <label class="q">4. O que mais surpreendeu vocês nesta atividade? Alguma previsão de vocês estava errada?<textarea class="fld" id="d4" rows="3"></textarea></label>
+    </div>
+    <div class="ws-card no-print">
+      <div class="btn-row">
+        <button class="btn pri" id="bPrint">🖨️ Imprimir / Salvar PDF</button>
+        <button class="btn" id="bReset">Recomeçar atividade</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div><!-- /app -->
+
+<!-- FOOTER -->
+<div class="inst-footer">
+  <span class="ftr-txt">PUMP: AD20P-1230C · 12V 3.6W · Qmax=240L/h</span>
+  <span class="ftr-txt">COBIANCHI, M. · PEREIRA, J.R.D.</span>
+  <div class="ftr-logos">
+    <span class="ftr-logo">CCE</span>
+    <span class="ftr-logo">DFI</span>
+    <span class="ftr-logo">SBF</span>
+    <span class="ftr-logo">CAPES</span>
+  </div>
+  <span class="ftr-txt">ABNT NBR ISO 5167-4</span>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const SVG_W=1000,SVG_H=300,CY=135,MG=40;
+const TW=SVG_W-MG*2,SC=TW/280;
+const SVGNS='http://www.w3.org/2000/svg';
+
+/* Eletrônica: MPX4250AP alimentado pelos 5 V do Arduino, ADC 10 bits com Vref = 5 V */
+const VS=5.0,VREF=5.0,ADC_N=1024;
+
+function sm(t){return .5*(1-Math.cos(Math.PI*t))}
+function profileR(x,Dm,dm){
+  const Ro=Dm/2+3,Rt=dm/2+3,Re=5,Ri=Dm/2,Rti=dm/2,Rei=4;
+  let ro,ri;
+  if(x<=40){ro=Re;ri=Rei}else if(x<=50){const t=(x-40)/10;ro=Re+(Ro-Re)*sm(t);ri=Rei+(Ri-Rei)*sm(t)}
+  else if(x<=70){ro=Ro;ri=Ri}else if(x<=103){const t=(x-70)/33;ro=Ro+(Rt-Ro)*t;ri=Ri+(Rti-Ri)*t}
+  else if(x<=110){ro=Rt;ri=Rti}else if(x<=210){const t=(x-110)/100;ro=Rt+(Ro-Rt)*t;ri=Rti+(Ri-Rti)*t}
+  else if(x<=230){ro=Ro;ri=Ri}else if(x<=240){const t=(x-230)/10;ro=Ro+(Re-Ro)*sm(t);ri=Ri+(Rei-Ri)*sm(t)}
+  else{ro=Re;ri=Rei}return{ro,ri};
+}
+function buildPath(pts){return'M'+pts.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join('L')}
+
+/* Densidade da água (kg/m³) — Kell (1975), válida de 0 a 150 °C */
+function rho(T){
+  return (999.83952+16.945176*T-7.9870401e-3*T*T-46.170461e-6*T**3+105.56302e-9*T**4-280.54253e-12*T**5)/(1+16.879850e-3*T);
+}
+/* Viscosidade dinâmica da água (Pa·s) — CRC Handbook: 0–20 °C (Hardy & Cottington) e 20–100 °C (Swindells et al.) */
+function mu(T){
+  if(T<=20) return 0.1*Math.pow(10,1301/(998.333+8.1855*(T-20)+0.00585*(T-20)**2)-3.30233); // poise → Pa·s
+  return 1.002e-3*Math.pow(10,(1.3272*(20-T)-0.001053*(T-20)**2)/(T+105));
+}
+/* Sensor + ADC */
+function sensorV(P){return VS*(0.004*(P/1e3)-0.04)}                       // P em Pa → V
+function adcRead(V){return Math.max(0,Math.min(ADC_N-1,Math.floor(V/VREF*ADC_N)))}
+function adcToP(c){return ((c*VREF/ADC_N)/VS+0.04)/0.004*1e3}            // contagem → Pa
+function fmtBR(x,dec){return x.toLocaleString('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec})}
+
+let SD={Ql:0,Q:0,Dm:20,dm:7};
+
+function upd(){
+  const Ql=+$('qS').value,T=+$('tS').value,Dm=+$('dS').value,Cd=+$('cdS').value,P1=+$('p1S').value*1e3;
+  // garganta sempre menor que o tubo (β < 1)
+  const gS=$('gS'),dMax=Math.min(15,Dm-2);
+  gS.max=dMax;
+  let dm=+gS.value; if(dm>dMax){dm=dMax;gS.value=dm}
+
+  $('qV').textContent=Ql;$('tV').textContent=T;$('dV').textContent=Dm;$('gV').textContent=dm;
+  $('cdV').textContent=fmtBR(Cd,3);$('p1V').textContent=fmtBR(P1/1e3,1);
+
+  const Q=Ql/3.6e6,D=Dm/1e3,d=dm/1e3,A1=Math.PI*D*D/4,A2=Math.PI*d*d/4,beta=d/D;
+  const V1=Q/A1,V2=Q/A2,r=rho(T),m=mu(T),Re=r*V1*D/m;
+
+  // ΔP real: Bernoulli ideal corrigido pelo Cd  →  ΔP = ρ(1−β⁴)/2 · (Q/(Cd·A₂))²
+  const dPof=q=>r*(1-beta**4)/2*(q/(Cd*A2))**2;
+  const dP=dPof(Q),dPmax=dPof(240/3.6e6);
+  const P2=P1-dP;
+
+  // Leitura pelo Arduino
+  const Vo1=sensorV(P1),Vo2=sensorV(P2),c1=adcRead(Vo1),c2=adcRead(Vo2);
+  const P1r=adcToP(c1),P2r=adcToP(c2),dPr=P1r-P2r;
+  const Qm=dPr>0?Cd*A2*Math.sqrt(2*dPr/(r*(1-beta**4))):0;
+  const Qml=Qm*3.6e6;
+
+  // Leituras
+  $('p1').textContent=fmtBR(P1r/1e3,2);
+  $('p1s').textContent='S1 · real '+fmtBR(P1/1e3,2)+' kPa';
+  $('p2').textContent=fmtBR(P2r/1e3,2);
+  const p2s=$('p2s');
+  if(P2<20e3){p2s.textContent='!! abaixo da faixa do sensor (20 kPa)';p2s.className='rd-sub warn'}
+  else{p2s.textContent='S2 · real '+fmtBR(P2/1e3,2)+' kPa';p2s.className='rd-sub'}
+  $('dp').textContent=fmtBR(dPr/1e3,2);
+  $('dps').textContent='real '+fmtBR(dP/1e3,3)+' kPa';
+  // barra: ΔP relativo ao ΔP na vazão máxima da bomba (evidencia ΔP ∝ Q²)
+  $('dpB').style.width=(dPmax>0?Math.min(100,dP/dPmax*100):0)+'%';
+  $('v1').textContent=fmtBR(V1,3);$('v2').textContent=fmtBR(V2,3);
+  $('qC').textContent=fmtBR(Qml,1);
+  const qErr=$('qErr');
+  if(Ql>0){
+    const e=(Qml-Ql)/Ql*100;
+    qErr.textContent='real '+Ql+' L/h · erro '+(e>=0?'+':'')+fmtBR(e,1)+' %';
+    qErr.className='rd-sub'+(Math.abs(e)>5?' warn':'');
+  }else{qErr.textContent='bomba desligada';qErr.className='rd-sub'}
+
+  // Avançados — faixas da ISO 5167-4 (Venturi clássico, convergente usinado)
+  $('bV').textContent=fmtBR(beta,3);
+  const bOk=beta>=.4&&beta<=.75;
+  $('bB').style.width=Math.min(100,Math.max(0,(beta-.1)/.8*100))+'%';
+  $('bB').style.background=bOk?'var(--azul2)':'var(--verm)';
+  const bS=$('bS');bS.textContent=bOk?'ISO: 0,40–0,75':'!! FORA DA FAIXA ISO (0,40–0,75)';bS.className='rd-sub'+(bOk?'':' warn');
+  $('rV').textContent=Math.round(Re).toLocaleString('pt-BR');
+  $('rS').textContent=Ql===0?'sem escoamento':(Re<2300?'laminar':Re<4e3?'transição':'turbulento')+(Re<2e5?' · ISO exige Re ≥ 2×10⁵':'');
+  $('rV').className='rd-val '+(Re<2300?'verde':Re<4e3?'amarelo':'laranja');
+  $('cV').textContent=fmtBR(Cd,3);
+  const isoOk=Re>=2e5&&Re<=1e6&&Dm>=50&&Dm<=250&&bOk;
+  $('cS').textContent=isoOk?'ISO: 0,995':'fora da faixa ISO · calibrar';
+  $('vo1').textContent=fmtBR(c1*VREF/ADC_N,3)+' V';
+  $('vo2').textContent=fmtBR(c2*VREF/ADC_N,3)+' V';
+  $('dv').textContent=fmtBR((Vo1-Vo2)*1e3,1);
+  $('adc').textContent=(c1-c2)+' passos do ADC ('+c1+' / '+c2+') · 1 passo ≈ '+fmtBR(VREF/ADC_N/(VS*0.004),3)+' kPa';
+
+
+  const off=Ql===0,dot=$('dot'),sB=$('sB');
+  dot.style.background=off?'#e74c3c':'#4cff8a';
+  dot.style.boxShadow='0 0 8px '+(off?'#e74c3c':'#4cff8a');
+  sB.textContent=off?'SISTEMA INATIVO':'SISTEMA ATIVO';
+  sB.style.color=off?'rgba(255,100,100,.9)':'rgba(255,255,255,.9)';
+
+  SD={Ql,Q,Dm,dm};
+  window.ST={Ql,T,Dm,dm,Cd,P1:P1/1e3,V1,V2,dP,dPr,P1r,P2r,Qml,Re,c1,c2};
+  if(window.onSim)window.onSim();
+  drawSVG(Dm,dm,P1r,P2r,Ql,V1,V2,dPr);
+}
+
+function drawSVG(Dm,dm,P1,P2,Ql,V1,V2,dP){
+  const N=300,oT=[],oB=[],iT=[],iB=[];
+  for(let i=0;i<=N;i++){
+    const mm=i/N*280,px=MG+mm*SC;
+    const{ro,ri}=profileR(mm,Dm,dm);
+    oT.push({x:px,y:CY-ro*SC});oB.push({x:px,y:CY+ro*SC});
+    iT.push({x:px,y:CY-ri*SC});iB.push({x:px,y:CY+ri*SC});
+  }
+  const set=(id,attrs)=>{const el=$(id);for(const k in attrs)el.setAttribute(k,attrs[k])};
+  set('wallTop',{d:buildPath(oT)+'L'+buildPath(iT.slice().reverse()).slice(1)+'Z'});
+  set('wallBot',{d:buildPath(oB)+'L'+buildPath(iB.slice().reverse()).slice(1)+'Z'});
+  const waterD=buildPath(iT)+'L'+buildPath(iB.slice().reverse()).slice(1)+'Z';
+  set('waterFill',{d:waterD});set('pressFill',{d:waterD});
+  set('outerTop',{d:buildPath(oT)});set('outerBot',{d:buildPath(oB)});
+  set('innerTop',{d:buildPath(iT)});set('innerBot',{d:buildPath(iB)});
+  set('capTL',{x1:oT[0].x,y1:oT[0].y,x2:iT[0].x,y2:iT[0].y});
+  set('capBL',{x1:oB[0].x,y1:oB[0].y,x2:iB[0].x,y2:iB[0].y});
+  set('capTR',{x1:oT[N].x,y1:oT[N].y,x2:iT[N].x,y2:iT[N].y});
+  set('capBR',{x1:oB[N].x,y1:oB[N].y,x2:iB[N].x,y2:iB[N].y});
+
+  // tomadas conforme ISO 5167-4: montante a 0,5·D antes do convergente; garganta a 0,5·d após o início da garganta
+  const s1mm=70-0.5*Dm,s2mm=103+0.5*Math.min(dm,7);
+  const s1x=MG+s1mm*SC,s2x=MG+s2mm*SC;
+  const s1p=profileR(s1mm,Dm,dm),s2p=profileR(s2mm,Dm,dm);
+  const sW=8*SC,bW=5*SC;
+  const s1y=CY-s1p.ro*SC,s2y=CY-s2p.ro*SC;
+  const sH=Math.min(22*SC,s1y-20);   // altura do tomador limitada para caber no desenho
+  set('s1outer',{x:s1x-sW/2,y:s1y-sH,width:sW,height:sH});
+  set('s1bore',{x:s1x-bW/2,y:s1y-sH+1,width:bW,height:sH-1});
+  set('s1gusset',{cx:s1x,cy:s1y,rx:7*SC,ry:3*SC});
+  set('s2outer',{x:s2x-sW/2,y:s2y-sH,width:sW,height:sH});
+  set('s2bore',{x:s2x-bW/2,y:s2y-sH+1,width:bW,height:sH-1});
+  set('s2gusset',{cx:s2x,cy:s2y,rx:5.5*SC,ry:2.5*SC});
+
+  // nome acima do sensor, valor ao lado (evita corte no topo do desenho)
+  set('lP1n',{x:s1x,y:Math.max(14,s1y-sH-6)});
+  set('lP1v',{x:s1x-sW/2-6,y:s1y-sH/2+4,'text-anchor':'end'});$('lP1v').textContent=fmtBR(P1/1e3,2)+' kPa';
+  set('lP2n',{x:s2x,y:Math.max(14,s2y-sH-6)});
+  set('lP2v',{x:s2x+sW/2+6,y:s2y-sH/2+4,'text-anchor':'start'});$('lP2v').textContent=fmtBR(P2/1e3,2)+' kPa';
+
+  // Cotas — ângulos calculados a partir de D e d atuais
+  const dR=(Dm-dm)/2;
+  const aConv=2*Math.atan(dR/33)*180/Math.PI,aDiv=2*Math.atan(dR/100)*180/Math.PI;
+  const dy=CY+profileR(60,Dm,dm).ro*SC+12;
+  let dHtml='';
+  function addDim(a,b,y,t){
+    const x1=MG+a*SC,x2=MG+b*SC;
+    dHtml+=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line x1="${x1}" y1="${y-2}" x2="${x1}" y2="${y+2}"/><line x1="${x2}" y1="${y-2}" x2="${x2}" y2="${y+2}"/>`;
+    dHtml+=`<text x="${(x1+x2)/2}" y="${y-3}" text-anchor="middle" stroke="none">${t}</text>`;
+  }
+  addDim(0,50,dy,'50');addDim(50,70,dy+10,'20');addDim(70,103,dy,`33 (${fmtBR(aConv,1)}°)`);addDim(103,110,dy+10,'7');
+  addDim(110,210,dy,`100 (${fmtBR(aDiv,1)}°)`);addDim(210,230,dy+10,'20');addDim(230,280,dy,'50');
+  addDim(0,280,dy+22,'280 mm');
+  $('dims').innerHTML=dHtml;
+
+  let sHtml='';
+  [['Espera',25],['Entrada',60],['Conv.',86],['Garg.',106.5],['Divergente',160],['Saída',220],['Espera',260]].forEach(([t,mm])=>{
+    sHtml+=`<text x="${MG+mm*SC}" y="${dy+34}">${t}</text>`;
+  });
+  $('sLabels').innerHTML=sHtml;
+
+  const ax1=MG-18,ax2=MG+TW+18;
+  $('cutA').innerHTML=`<circle cx="${ax1}" cy="${CY}" r="8"/><text x="${ax1}" y="${CY+4}" text-anchor="middle" stroke="none">A</text><circle cx="${ax2}" cy="${CY}" r="8"/><text x="${ax2}" y="${CY+4}" text-anchor="middle" stroke="none">A</text>`;
+
+  $('flowArrow').innerHTML=Ql>0?`<line x1="${MG+10}" y1="${CY}" x2="${MG+TW-10}" y2="${CY}"/><line x1="${MG+TW-10}" y1="${CY}" x2="${MG+TW-18}" y2="${CY-4}" stroke-dasharray="none"/><line x1="${MG+TW-10}" y1="${CY}" x2="${MG+TW-18}" y2="${CY+4}" stroke-dasharray="none"/>`:'';
+
+  const hw=380,hx=(SVG_W-hw)/2;
+  set('hudBg',{x:hx,y:SVG_H-32,width:hw,height:24});
+  set('hudTxt',{x:SVG_W/2,y:SVG_H-16});
+  $('hudTxt').textContent=`Q=${Ql.toFixed(0)} L/h  ΔP(lido)=${fmtBR(dP/1e3,2)} kPa  V₁=${fmtBR(V1,2)}  V₂=${fmtBR(V2,2)} m/s`;
+}
+
+/* ─── PARTÍCULAS: velocidade local pela continuidade, v(x) = Q / A(x) ─── */
+(function(){
+  const g=$('pGroup'),parts=[],MAXP=350;
+  let last=performance.now(),acc=0;
+  function vAt(mm){const ri=profileR(mm,SD.Dm,SD.dm).ri/1e3;return SD.Q/(Math.PI*ri*ri)}
+  function spawn(){
+    if(parts.length>=MAXP)return;
+    const el=document.createElementNS(SVGNS,'circle');
+    el.setAttribute('r',(0.9+Math.random()*1.1).toFixed(2));
+    el.setAttribute('opacity',(0.35+Math.random()*0.35).toFixed(2));
+    g.appendChild(el);
+    parts.push({x:0,f:(Math.random()*2-1)*0.85,el});
+  }
+  function tick(now){
+    const dt=Math.min(0.05,(now-last)/1000);last=now;
+    if(SD.Ql>0){acc+=dt*SD.Ql/240*30;while(acc>=1){acc--;spawn()}}
+    // câmera lenta: velocidade na seção D vira 10–30 mm/s de tela; resto proporcional a v(x)
+    const vD=SD.Q/(Math.PI*(SD.Dm/2e3)**2),k=vD>0?(10+20*SD.Ql/240)/vD:0;
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];
+      if(SD.Ql===0){p.el.remove();parts.splice(i,1);continue}
+      p.x+=Math.min(600,k*vAt(p.x))*dt;
+      if(p.x>=280){p.el.remove();parts.splice(i,1);continue}
+      const ri=profileR(p.x,SD.Dm,SD.dm).ri;
+      p.el.setAttribute('cx',(MG+p.x*SC).toFixed(1));
+      p.el.setAttribute('cy',(CY+p.f*ri*SC).toFixed(1));
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+upd();
+
+/* ═══════════════ ATIVIDADE DO ALUNO ═══════════════ */
+(function(){
+const KEY='venturi_atividade_aluno_v1';
+const NOMES={Ql:['Q','L/h','qS'],Dm:['D','mm','dS'],dm:['d','mm','gS'],T:['T','°C','tS'],Cd:['Cd','','cdS'],P1:['P₁','kPa','p1S']};
+const BASE={Cd:0.98,P1:105};
+const fmtV=(k,v)=>k==='Cd'?fmtBR(v,3):k==='P1'?fmtBR(v,1):String(v);
+const igual=(a,b)=>Math.abs(a-b)<1e-6;
+const regime=Re=>Re<2300?'laminar':Re<4000?'transição':'turbulento';
+const f=fmtBR;
+
+const M={
+ m1:{titulo:'Missão 1 · O estreitamento',conceito:'Equação da continuidade',
+  intro:'O que acontece com a água quando o tubo fica mais estreito? Nesta missão vocês vão mudar o diâmetro da garganta (d) e manter a vazão fixa.',
+  pergunta:'Se a garganta ficar mais estreita, a água passa por ela…',
+  opcoes:['mais rápido','mais devagar','com a mesma velocidade'],
+  fix:{Ql:240,Dm:20,T:25,...BASE},var:'dm',vals:[15,12,9,7,6,5,4],
+  cols:[['d (mm)',r=>r.dm],['V₁ (m/s)',r=>f(r.V1,3)],['V₂ (m/s)',r=>f(r.V2,3)],['A₂·V₂ (L/h)',r=>f(Math.PI*(r.dm/1e3)**2/4*r.V2*3.6e6,1)],['ΔP real (kPa)',r=>f(r.dP/1e3,3)]],
+  chart:{x:r=>1e3/r.dm**4,y:r=>r.dP/1e3,xl:'1/d⁴ (×10⁻³ mm⁻⁴)',yl:'ΔP (kPa)',titulo:'ΔP × 1/d⁴'},
+  obs:['O que aconteceu com a velocidade V₂ quando d diminuiu? Isso confirma a previsão de vocês?',
+       'Observem a coluna A₂·V₂. O valor mudou? O que isso significa sobre a quantidade de água que passa por segundo?',
+       'O gráfico ΔP × 1/d⁴ parece uma reta? O que isso diz sobre como ΔP depende de d?'],
+  exp:'Expliquem, com as palavras de vocês, por que a água acelera no estreitamento. (Dica: a água não pode "sumir" nem se acumular dentro do tubo.)'},
+ m2:{titulo:'Missão 2 · Velocidade e pressão',conceito:'Equação de Bernoulli',
+  intro:'Na Missão 1 vocês viram que a água acelera na garganta. E a pressão? Agora a garganta fica fixa em 7 mm e vocês vão mudar a vazão.',
+  pergunta:'Na garganta, onde a água é mais rápida, a pressão será…',
+  opcoes:['maior que na entrada','menor que na entrada','igual à da entrada'],
+  fix:{Dm:20,dm:7,T:25,...BASE},var:'Ql',vals:[60,120,180,240],
+  cols:[['Q (L/h)',r=>r.Ql],['P1 lido (kPa)',r=>f(r.P1r/1e3,2)],['P2 lido (kPa)',r=>f(r.P2r/1e3,2)],['ΔP real (kPa)',r=>f(r.dP/1e3,3)],['Q² (×10³ L²/h²)',r=>f(r.Ql**2/1e3,1)]],
+  chart:{x:r=>r.Ql**2/1e3,y:r=>r.dP/1e3,xl:'Q² (×10³ L²/h²)',yl:'ΔP (kPa)',titulo:'ΔP × Q²'},
+  obs:['Onde a pressão foi menor: na entrada (P1) ou na garganta (P2)? Isso confirma a previsão de vocês?',
+       'Observem as partículas no desenho do tubo. Onde elas andam mais rápido? Relacionem com as pressões.'],
+  ratio:true,
+  exp:'Expliquem usando a ideia de energia: se a energia por volume (P + ½ρV²) se conserva, por que a pressão cai onde a velocidade aumenta? Voltem ao exemplo da mangueira.'},
+ m3:{titulo:'Missão 3 · O medidor mente?',conceito:'Medição, resolução e erro',
+  intro:'O medidor calcula a vazão a partir do ΔP lido pelos sensores e pelo Arduino. Ele sempre acerta? Mantenham a garganta em 7 mm e diminuam a vazão aos poucos.',
+  pergunta:'Quando a vazão for bem pequena, o medidor vai ser…',
+  opcoes:['mais preciso','menos preciso','igualmente preciso'],
+  fix:{Dm:20,dm:7,T:25,...BASE},var:'Ql',vals:[240,180,120,90,60,30],
+  cols:[['Q real (L/h)',r=>r.Ql],['Q medida (L/h)',r=>f(r.Qml,1)],['Erro (%)',r=>(r.Qml>=r.Ql?'+':'')+f((r.Qml-r.Ql)/r.Ql*100,1)],['ΔP lido (kPa)',r=>f(r.dPr/1e3,2)],['Passos do ADC',r=>r.c1-r.c2]],
+  chart:{x:r=>r.Ql,y:r=>Math.abs((r.Qml-r.Ql)/r.Ql*100),xl:'Q real (L/h)',yl:'|erro| (%)',titulo:'Erro × vazão',noFit:true},
+  obs:['Em qual vazão o erro foi maior? Isso confirma a previsão de vocês?',
+       'Observem a coluna "Passos do ADC". O Arduino só consegue ler a pressão em "degraus" de cerca de 0,24 kPa. Como isso explica o erro nas vazões baixas?',
+       'Proponham uma melhoria no equipamento para medir vazões pequenas com mais precisão.'],
+  exp:'Por que não devemos confiar cegamente em um número que aparece numa tela (de um aparelho, de um aplicativo ou de uma IA)? Usem o que viram nesta missão como exemplo.'},
+ m4:{titulo:'Missão 4 · Água quente ou fria? (opcional)',conceito:'Densidade, viscosidade e número de Reynolds',
+  intro:'A temperatura muda as propriedades da água. Mantenham Q = 240 L/h e d = 7 mm e mudem a temperatura.',
+  pergunta:'Esquentando a água de 5 °C até 80 °C, a diferença de pressão ΔP vai…',
+  opcoes:['aumentar muito','diminuir muito','mudar muito pouco'],
+  fix:{Ql:240,Dm:20,dm:7,...BASE},var:'T',vals:[5,25,50,80],
+  cols:[['T (°C)',r=>r.T],['Reynolds',r=>Math.round(r.Re).toLocaleString('pt-BR')],['Regime',r=>regime(r.Re)],['ΔP real (kPa)',r=>f(r.dP/1e3,3)]],
+  chart:{x:r=>r.T,y:r=>r.Re/1e3,xl:'T (°C)',yl:'Re (×10³)',titulo:'Reynolds × temperatura',noFit:true},
+  obs:['O número de Reynolds mudou muito ou pouco? E o ΔP? Isso confirma a previsão de vocês?',
+       'O ΔP depende da densidade da água e o Reynolds depende da viscosidade ("grossura" do fluido). Qual das duas propriedades muda mais com a temperatura? Como vocês sabem?'],
+  exp:'O mel escorre mais rápido quente ou frio? Relacionem com o que viram sobre a viscosidade da água.'}
+};
+
+let S={f:{},r:{},lock:{},d:{m1:{},m2:{},m3:{},m4:{}},tab:'t0'};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.d)S=Object.assign(S,s)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ── monta as missões ── */
+function needTxt(o){return Object.entries(o).map(([k,v])=>NOMES[k][0]+' = '+fmtV(k,v)+(NOMES[k][1]?' '+NOMES[k][1]:'')).join(' · ')}
+for(const id in M){
+  const m=M[id],sec=$('sec-'+id);
+  const opts=m.opcoes.map((o,i)=>`<label><input type="radio" name="${id}_prev" value="${i}"> ${o}</label>`).join('');
+  const th=m.cols.map(c=>`<th>${c[0]}</th>`).join('')+'<th class="no-print"></th>';
+  const obs=m.obs.map((q,i)=>`<label class="q">${i+1}. ${q}<textarea class="fld after-lock" id="${id}_o${i}" rows="2"></textarea></label>`).join('');
+  const ratio=m.ratio?`<div class="q">${m.obs.length+1}. Quando a vazão dobrou de 120 para 240 L/h, o ΔP ficou multiplicado por quanto?
+      <div class="ratio-row"><input class="fld num after-lock" id="${id}_ratio" type="text" placeholder="Ex.: 2"><span class="msg" id="${id}_ratioMsg"></span></div></div>`:'';
+  sec.innerHTML=`
+  <div class="ws-card">
+    <h3>${m.titulo}</h3><div class="meta">Conceito: ${m.conceito}</div>
+    <p style="margin-top:8px">${m.intro}</p>
+    <div class="step"><span>1</span><b>Prever</b></div>
+    <p><b>${m.pergunta}</b></p>
+    <div class="opts" id="${id}_opts">${opts}</div>
+    <label class="q">Por quê? Expliquem a previsão de vocês.<textarea class="fld" id="${id}_porque" rows="2"></textarea></label>
+    <div class="btn-row"><button class="btn pri" id="${id}_lockB">Registrar previsão</button><span id="${id}_lockS"></span></div>
+    <div class="msg" id="${id}_lockMsg"></div>
+
+    <div class="step" id="${id}_st2"><span>2</span><b>Observar</b></div>
+    <div class="locked-note" id="${id}_ln">Registrem a previsão para liberar esta etapa.</div>
+    <div class="need">Ajustem o simulador: <b>${needTxt(m.fix)}</b> e <b>${NOMES[m.var][0]}</b> conforme cada linha.
+      <div class="btn-row" style="margin-top:6px"><button class="btn sm after-lock" data-fix="${id}">Ajustar os valores fixos</button></div></div>
+    <div class="mirror after-lock-box" id="${id}_mir"><b>${NOMES[m.var][0]} (${NOMES[m.var][1]})</b><input type="range" class="after-lock" id="${id}_mr" data-src="${NOMES[m.var][2]}"><span class="mv" id="${id}_mv"></span></div>
+    <div class="tbl-wrap"><table class="dt"><thead><tr>${th}</tr></thead><tbody id="${id}_tb"></tbody></table></div>
+    <div class="msg" id="${id}_capMsg"></div>
+    <canvas class="chart" id="${id}_ch" width="640" height="300"></canvas>
+    <div class="fit" id="${id}_fit"></div>
+
+    <h4>Responda</h4>
+    ${obs}${ratio}
+    <div class="step" id="${id}_st3"><span>3</span><b>Explicar</b></div>
+    <label class="q">${m.exp}<textarea class="fld after-lock" id="${id}_exp" rows="3"></textarea></label>
+    <div class="btn-row no-print"><button class="btn" data-go="${nextTab(id)}">Próxima etapa →</button></div>
+  </div>`;
+}
+function nextTab(id){const o=['t0','m1','m2','m3','m4','t5'];return o[o.indexOf(id)+1]||'t5'}
+
+/* ── campos e rádios ── */
+document.querySelectorAll('.fld').forEach(el=>{
+  if(S.f[el.id]!=null)el.value=S.f[el.id];
+  el.addEventListener('input',()=>{S.f[el.id]=el.value;save();refresh()});
+});
+document.querySelectorAll('input[type=radio]').forEach(el=>{
+  if(S.r[el.name]===el.value)el.checked=true;
+  el.addEventListener('change',()=>{S.r[el.name]=el.value;save();refresh()});
+});
+
+/* ── previsão ── */
+for(const id in M){
+  $(id+'_lockB').addEventListener('click',()=>{
+    const msg=$(id+'_lockMsg'),txt=($(id+'_porque').value||'').trim();
+    if(S.r[id+'_prev']==null){msg.textContent='Escolham uma das opções.';msg.className='msg err';return}
+    if(txt.length<15){msg.textContent='Escrevam uma justificativa um pouco maior.';msg.className='msg err';return}
+    S.lock[id]=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});msg.textContent='';save();refresh();
+  });
+}
+
+/* ── captura ── */
+function capture(id,i){
+  const m=M[id],need=Object.assign({},m.fix,{[m.var]:m.vals[i]}),msg=$(id+'_capMsg');
+  const erro=Object.entries(need).filter(([k,v])=>!igual(ST[k],v)).map(([k,v])=>NOMES[k][0]+' para '+fmtV(k,v)+(NOMES[k][1]?' '+NOMES[k][1]:''));
+  if(erro.length){msg.textContent='Ajustem no simulador: '+erro.join(', ')+'.';msg.className='msg err';return}
+  S.d[id][i]={Ql:ST.Ql,T:ST.T,Dm:ST.Dm,dm:ST.dm,V1:ST.V1,V2:ST.V2,dP:ST.dP,dPr:ST.dPr,P1r:ST.P1r,P2r:ST.P2r,Qml:ST.Qml,Re:ST.Re,c1:ST.c1,c2:ST.c2};
+  msg.textContent='Leitura registrada!';msg.className='msg ok';save();refresh();
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-cap]');if(b){const[id,i]=b.dataset.cap.split(':');capture(id,+i)}
+  const fx=e.target.closest('[data-fix]');if(fx){const m=M[fx.dataset.fix];
+    Object.entries(m.fix).forEach(([k,v])=>{$(NOMES[k][2]).value=v});upd();
+    const msg=$(fx.dataset.fix+'_capMsg');msg.textContent='Valores fixos ajustados. Agora mudem '+NOMES[m.var][0]+' conforme cada linha.';msg.className='msg ok'}
+  const g=e.target.closest('[data-go]');if(g){showTab(g.dataset.go);window.scrollTo({top:$('tabs').offsetTop-8,behavior:'smooth'})}
+});
+
+/* ── gráfico ── */
+function drawChart(cv,pts,c){
+  const dpr=Math.max(1,window.devicePixelRatio||1),W=640,H=300,L=64,R=18,T=32,B=50;
+  if(cv.width!==W*dpr){cv.width=W*dpr;cv.height=H*dpr}
+  const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);x.font='13px "Source Sans 3",sans-serif';
+  x.fillStyle='#1a3a6b';x.font='bold 16px "Source Sans 3",sans-serif';x.fillText(c.titulo,L,18);x.font='15px "Source Sans 3",sans-serif';
+  if(pts.length<2){x.fillStyle='#8a9ab5';x.fillText('Capturem pelo menos 2 leituras para ver o gráfico.',L,H/2);return null}
+  const xm=Math.max(...pts.map(p=>p[0]))*1.1||1,ym=Math.max(...pts.map(p=>p[1]))*1.15||1;
+  const X=v=>L+v/xm*(W-L-R),Y=v=>H-B-v/ym*(H-T-B);
+  x.strokeStyle='#dde3ed';x.lineWidth=1;x.fillStyle='#3a4a6b';
+  for(let k=0;k<=5;k++){const yv=ym*k/5,xv=xm*k/5;
+    x.beginPath();x.moveTo(L,Y(yv));x.lineTo(W-R,Y(yv));x.stroke();
+    x.textAlign='right';x.fillText(f(yv,yv<1?2:1),L-6,Y(yv)+4);
+    x.textAlign='center';x.fillText(f(xv,xv<10?2:0),X(xv),H-B+16);}
+  x.strokeStyle='#1a3a6b';x.beginPath();x.moveTo(L,T-6);x.lineTo(L,H-B);x.lineTo(W-R,H-B);x.stroke();
+  x.textAlign='center';x.fillStyle='#1a3a6b';x.fillText(c.xl,(L+W-R)/2,H-8);
+  x.save();x.translate(14,(T+H-B)/2);x.rotate(-Math.PI/2);x.fillText(c.yl,0,0);x.restore();
+  let fit=null;
+  if(!c.noFit){
+    const sxy=pts.reduce((s,p)=>s+p[0]*p[1],0),sxx=pts.reduce((s,p)=>s+p[0]*p[0],0),k=sxy/sxx;
+    const my=pts.reduce((s,p)=>s+p[1],0)/pts.length,ssr=pts.reduce((s,p)=>s+(p[1]-k*p[0])**2,0),sst=pts.reduce((s,p)=>s+(p[1]-my)**2,0);
+    fit={k,r2:sst>0?1-ssr/sst:1};
+    x.strokeStyle='#d35400';x.setLineDash([6,4]);x.lineWidth=1.5;x.beginPath();x.moveTo(X(0),Y(0));x.lineTo(X(xm),Y(k*xm));x.stroke();x.setLineDash([]);
+  }else{
+    const s=pts.slice().sort((a,b)=>a[0]-b[0]);x.strokeStyle='rgba(37,99,168,.5)';x.lineWidth=1.5;x.beginPath();
+    s.forEach((p,i)=>i?x.lineTo(X(p[0]),Y(p[1])):x.moveTo(X(p[0]),Y(p[1])));x.stroke();
+  }
+  x.fillStyle='#2563a8';pts.forEach(p=>{x.beginPath();x.arc(X(p[0]),Y(p[1]),4.5,0,7);x.fill()});
+  return fit;
+}
+
+/* ── atualização geral ── */
+let total=0,feito=0;
+function refresh(){
+  total=0;feito=0;
+  ['nomes','turma','a1','a2','a3'].forEach(k=>{total++;if((S.f[k]||'').trim())feito++});
+  for(const id in M){
+    const m=M[id],lk=!!S.lock[id];
+    // previsão
+    document.querySelectorAll(`input[name=${id}_prev]`).forEach(r=>r.disabled=lk);
+    $(id+'_porque').readOnly=lk;
+    $(id+'_lockB').style.display=lk?'none':'';
+    $(id+'_lockS').innerHTML=lk?`<span class="badge-ok">Previsão registrada às ${S.lock[id]}</span>`:'';
+    $(id+'_ln').style.display=lk?'none':'';
+    $(id+'_st2').classList.toggle('lock',!lk);$(id+'_st3').classList.toggle('lock',!lk);
+    $('sec-'+id).querySelectorAll('.after-lock').forEach(el=>el.disabled=!lk);
+    // tabela
+    const live=typeof ST!=='undefined'?ST:null;
+    $(id+'_tb').innerHTML=m.vals.map((v,i)=>{
+      const r=S.d[id][i];
+      const atual=live&&igual(live[m.var],v)&&Object.entries(m.fix).every(([k,w])=>igual(live[k],w));
+      const cells=r?m.cols.map(c=>`<td>${c[1](r)}</td>`).join(''):`<td>${v}</td>`+m.cols.slice(1).map(()=>'<td>—</td>').join('');
+      return `<tr>${cells.replace('<td>',atual?'<td class="cur">':'<td>')}<td class="no-print"><button class="btn sm${atual&&lk?' pri':''}" data-cap="${id}:${i}" ${lk?'':'disabled'}>${r?'↻':'Capturar'}</button></td></tr>`;
+    }).join('');
+    // gráfico
+    const rows=Object.values(S.d[id]),pts=rows.map(r=>[m.chart.x(r),m.chart.y(r)]);
+    const fit=drawChart($(id+'_ch'),pts,m.chart);
+    $(id+'_fit').textContent=fit&&pts.length>=3?`Reta pela origem: ${m.chart.yl.split(' ')[0]} = ${f(fit.k,4)} · x   (R² = ${f(fit.r2,4)}; quanto mais perto de 1, mais os pontos formam uma reta)`:'';
+    // razão (missão 2)
+    if(m.ratio){
+      const a=S.d[id][1],b=S.d[id][3],ms=$(id+'_ratioMsg'),u=(S.f[id+'_ratio']||'').trim();
+      ms.textContent=u&&a&&b?`Pelos dados de vocês: ΔP(240) ÷ ΔP(120) = ${f(b.dP/a.dP,2)}`:(u?'Capturem as linhas de 120 e 240 L/h para conferir.':'');
+      ms.className='msg '+(u&&a&&b?'ok':'err');
+    }
+    // progresso
+    const qs=[id+'_porque',...m.obs.map((_,i)=>id+'_o'+i),id+'_exp'].concat(m.ratio?[id+'_ratio']:[]);
+    const req=id==='m4'?0:1;
+    let mt=0,mf=0;
+    mt++;if(lk)mf++;
+    mt+=m.vals.length;mf+=Object.keys(S.d[id]).length;
+    qs.forEach(k=>{mt++;if((S.f[k]||'').trim())mf++});
+    if(req){total+=mt;feito+=mf}
+    document.querySelector(`.tabs [data-t=${id}]`).classList.toggle('done',mf===mt);
+  }
+  ['d1','d2','d3','d4'].forEach(k=>{total++;if((S.f[k]||'').trim())feito++});
+  [1,2,3].forEach(i=>{$('ant'+i).textContent=(S.f['a'+i]||'').trim()||'(sem resposta)'});
+  document.querySelector('.tabs [data-t=t0]').classList.toggle('done',['nomes','a1','a2','a3'].every(k=>(S.f[k]||'').trim()));
+  document.querySelector('.tabs [data-t=t5]').classList.toggle('done',['d1','d2','d3','d4'].every(k=>(S.f[k]||'').trim()));
+  const pc=Math.round(feito/total*100);
+  $('progTxt').textContent='Progresso: '+pc+'%'+(pc===100?' · atividade completa!':'');
+  $('progFill').style.width=pc+'%';
+}
+function syncMirrors(){for(const id in M){const r=$(id+'_mr'),src=$(r.dataset.src),m=M[id];
+  r.min=src.min;r.max=src.max;r.step=src.step;r.value=src.value;$(id+'_mv').textContent=src.value+' '+NOMES[m.var][1]}}
+window.onSim=()=>{syncMirrors();if(M[S.tab])refresh()};
+document.querySelectorAll('.mirror input').forEach(r=>r.addEventListener('input',()=>{$(r.dataset.src).value=r.value;upd()}));
+
+/* ── abas ── */
+function showTab(t){
+  S.tab=t;save();
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('.tab-sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+t));
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.t)));
+
+/* ── impressão / reinício ── */
+function fitAreas(){document.querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=(t.scrollHeight+4)+'px'})}
+window.addEventListener('beforeprint',fitAreas);
+$('bPrint').addEventListener('click',()=>{fitAreas();window.print()});
+$('bReset').addEventListener('click',()=>{
+  if(!confirm('Apagar todas as respostas e leituras desta atividade?'))return;
+  try{localStorage.removeItem(KEY)}catch(e){}location.reload();
+});
+$('bSimReset').addEventListener('click',()=>{
+  [['qS',240],['tS',25],['dS',20],['gS',7],['cdS',0.98],['p1S',105]].forEach(([k,v])=>{$(k).value=v});upd();
+});
+if(!S.f.data){const d=new Date();$('data').value=d.toLocaleDateString('sv-SE');S.f.data=$('data').value;}
+
+showTab(S.tab||'t0');syncMirrors();refresh();
+const temDados=(S.f.nomes||'').trim()||Object.keys(S.lock).length;
+if(temDados){const r=$('resume');r.style.display='block';
+  r.innerHTML='<b>Este aparelho já tem uma atividade em andamento</b>'+((S.f.nomes||'').trim()?' do grupo: <b></b>':'')+'.<div class="btn-row"><button class="btn pri" id="rCont">Continuar</button><button class="btn" id="rNova">Começar nova atividade</button></div>';
+  if((S.f.nomes||'').trim())r.querySelector('b:nth-of-type(2)').textContent=S.f.nomes.trim();
+  $('rCont').onclick=()=>{r.style.display='none'};
+  $('rNova').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()};}
+})();
+
+</script>
+</body>
+</html>
